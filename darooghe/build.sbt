@@ -1,8 +1,8 @@
-name := "Darooghe"
+name := "darooghe"
 
 version := "0.1"
 
-organization := "ir.darooghe"
+organization := "ir.khazane"
 
 scalaVersion := "2.12.7"
 
