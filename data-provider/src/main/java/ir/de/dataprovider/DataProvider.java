@@ -1,11 +1,11 @@
-package ir.darooghe;
+package ir.de.dataprovider;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import java.io.File;
 
-public class Darooghe {
+public class DataProvider {
 
     private KafkaWriter kafkaWriter;
     private BitcoinFecher bitcoinFecher;
@@ -20,10 +20,10 @@ public class Darooghe {
             config = ConfigFactory.load();
         }
 
-        kafkaWriter = new KafkaWriter(config.getString("darooghe.kafka.bootstrap.servers"),
-                config.getString("darooghe.kafka.topic"));
+        kafkaWriter = new KafkaWriter(config.getString("data-provider.kafka.bootstrap.servers"),
+                config.getString("data-provider.kafka.topic"));
 
-        bitcoinFecher = new BitcoinFecher(config.getString("darooghe.bitcoin.wss.uri"), kafkaWriter);
+        bitcoinFecher = new BitcoinFecher(config.getString("data-provider.bitcoin.wss.uri"), kafkaWriter);
         bitcoinFecher.start();
     }
 

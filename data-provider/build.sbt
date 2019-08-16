@@ -1,12 +1,13 @@
-name := "darooghe"
+name := "data-provider"
 
 version := "0.1"
 
-organization := "ir.khazane"
+organization := "ir.de"
 
 scalaVersion := "2.12.7"
 
-mainClass in assembly := Some("ir.darooghe.Application")
+mainClass in assembly := Some("ir.de.dataprovider.Application")
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 
 //libraryDependencies += "com.squareup.okhttp" % "okhttp" % "2.7.0"
 libraryDependencies += "org.apache.kafka" %% "kafka" % "2.2.0"

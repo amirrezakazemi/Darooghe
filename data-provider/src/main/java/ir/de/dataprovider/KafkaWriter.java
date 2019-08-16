@@ -1,4 +1,4 @@
-package ir.darooghe;
+package ir.de.dataprovider;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;

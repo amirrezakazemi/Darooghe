@@ -1,11 +1,11 @@
-package ir.darooghe;
+package ir.de.dataprovider;
 
 public class Application {
 
     public static void main(String[] args) {
         try {
-            Darooghe darooghe = new Darooghe();
-            darooghe.start();
+            DataProvider dataProvider = new DataProvider();
+            dataProvider.start();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
