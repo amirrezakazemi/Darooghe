@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Darooghe {
 
@@ -23,8 +24,32 @@ public class Darooghe {
         kafkaWriter = new KafkaWriter(config.getString("darooghe.kafka.bootstrap.servers"),
                 config.getString("darooghe.kafka.topic"));
 
-        bitcoinFecher = new BitcoinFecher(config.getString("darooghe.bitcoin.wss.uri"), kafkaWriter);
-        bitcoinFecher.start();
+        bitcoinFecher = new BitcoinFecher(kafkaWriter);
+        Thread bitcoin_thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    bitcoinFecher.getBitcoinCurrentPrice();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Thread ethereum_thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    bitcoinFecher.getEthereumCurrentPrice();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        //bitcoin_thread.start();
+        //ethereum_thread.start();
+        //bitcoinFecher.start(config.getString("darooghe.ethereum.wss.uri"), "bitcoin-unc");
+        bitcoinFecher.start(config.getString("darooghe.ethereum.wss.uri"), "ethereum-unc");
+
     }
 
     public void close() {

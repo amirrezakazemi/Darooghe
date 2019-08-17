@@ -5,9 +5,13 @@ package ir.darooghe;
 //import com.squareup.okhttp.OkHttpClient;
 //import com.squareup.okhttp.Request;
 //import com.squareup.okhttp.Response;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -25,36 +29,78 @@ public class BitcoinFecher {
 //    private static ObjectMapper objectMapper = new ObjectMapper();
 
     private URI serverUri;
+    private String key;
+    //private URI url;
     private KafkaWriter kafkaWriter;
     private List<WebSocketClient> webSocketClients;
 
 
-    public BitcoinFecher(String serverUri, KafkaWriter kafkaWriter) {
-        try {
+    public BitcoinFecher(KafkaWriter kafkaWriter) {
+        /*try {
             this.serverUri = new URI(serverUri);
         } catch (URISyntaxException e) {
             // todo: log
             System.exit(1);
-        }
+        }*/
 
         this.kafkaWriter = kafkaWriter;
         webSocketClients = new ArrayList<>();
     }
 
+    private static final String BITCOIN_CURRENT_PRICE = "https://www.bitstamp.net/api/v2/ticker_hour/btcusd";
+    private static final String ETHEREUM_CURRENT_PRICE = "https://www.bitstamp.net/api/v2/ticker_hour/ethusd";
+    private static OkHttpClient client = new OkHttpClient();
 
-
-    public void start() throws InterruptedException {
+    public void getEthereumCurrentPrice() throws IOException {
+        while(true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Request request = new Request.Builder()
+                    .url(ETHEREUM_CURRENT_PRICE)
+                    .build();
+            Response response = client.newCall(request).execute();
+            kafkaWriter.writeString("ethereum-price", response.body().string());
+        }
+    }
+    public void getBitcoinCurrentPrice() throws IOException {
+        while(true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Request request = new Request.Builder()
+                    .url(BITCOIN_CURRENT_PRICE)
+                    .build();
+            Response response = client.newCall(request).execute();
+            kafkaWriter.writeString("bitcoin-price", response.body().string());
+        }
+    }
+    public void start(String url, String key) throws InterruptedException {
+        try {
+            this.serverUri = new URI(url);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        this.key = key;
+        System.out.println("well im here");
         WebSocketClient unconfirmedTransaction = new WebSocketClient(serverUri) {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
                 System.out.println("New connection opened in Bitcoin fetcher for unconfirmed transactions.");
-                send ("{\"op\": \"unconfirmed_sub\"}");
+                if (key.equals("bitcoin-unc"))
+                    send ("{\"op\": \"unconfirmed_sub\"}");
+                else if (key.equals("ethereum-unc"))
+                    send("{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"subscribe\",\"params\":[\"transaction\"]}");
             }
 
             @Override
             public void onMessage(String message) {
                 System.out.println("Bitcoin fetcher unconfirmed transactions web socket received message: " + message);
-                kafkaWriter.writeString("bitcoin-unc", message);
+                kafkaWriter.writeString(key, message);
             }
 
             @Override
