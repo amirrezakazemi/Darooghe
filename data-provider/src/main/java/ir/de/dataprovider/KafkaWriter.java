@@ -22,7 +22,8 @@ public class KafkaWriter implements Closeable {
 
     public void writeString(String key, String record, String topic) {
         System.out.println(key + " : " + record);
-        producer.send(new ProducerRecord<String, String>(topic, key, record), (m, e) -> System.out.println("sent!!!"));
+        producer.send(new ProducerRecord<String, String>(topic, key, record),
+                (m, e) -> System.out.println(String.format("message: %s\t error: %s", m, e)));
         producer.flush();
     }
 
