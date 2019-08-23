@@ -11,11 +11,14 @@ public class HttpClientDataProvider {
     private static final String BITCOIN_CURRENT_PRICE = "https://www.bitstamp.net/api/v2/ticker_hour/btcusd";
     private static final String ETHEREUM_CURRENT_PRICE = "https://www.bitstamp.net/api/v2/ticker_hour/ethusd";
 
+    private String topic;
+
     private OkHttpClient client;
     private KafkaWriter kafkaWriter;
 
-    public HttpClientDataProvider(KafkaWriter kafkaWriter) {
+    public HttpClientDataProvider(KafkaWriter kafkaWriter, String topic) {
         this.kafkaWriter = kafkaWriter;
+        this.topic = topic;
         client = new OkHttpClient();
     }
 
@@ -24,7 +27,7 @@ public class HttpClientDataProvider {
                 .url(url)
                 .build();
         Response response = client.newCall(request).execute();
-        kafkaWriter.writeString(key, response.body().string());
+        kafkaWriter.writeString(key, response.body().string(), topic);
     }
 
     public void start() {

@@ -9,24 +9,21 @@ import java.util.Properties;
 
 public class KafkaWriter implements Closeable {
 
-    private String topic;
     private Producer<String, String> producer;
 
-    public KafkaWriter(String bootstrapServers, String topic) {
+    public KafkaWriter(String bootstrapServers) {
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapServers);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         producer = new KafkaProducer<>(props);
-
-        this.topic = topic;
     }
 
-    public void writeString(String key, String record) {
+    public void writeString(String key, String record, String topic) {
         System.out.println(key + " : " + record);
         producer.send(new ProducerRecord<String, String>(topic, key, record), (m, e) -> System.out.println("sent!!!"));
-//        producer.flush();
+        producer.flush();
     }
 
     @Override

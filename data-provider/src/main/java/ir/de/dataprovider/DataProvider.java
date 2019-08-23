@@ -21,13 +21,14 @@ public class DataProvider {
             config = ConfigFactory.load();
         }
 
-        kafkaWriter = new KafkaWriter(config.getString("data-provider.kafka.bootstrap.servers"),
-                config.getString("data-provider.kafka.topic"));
+        kafkaWriter = new KafkaWriter(config.getString("data-provider.kafka.bootstrap.servers"));
 
-        webSocketDataProvider = new WebSocketDataProvider(kafkaWriter);
+        webSocketDataProvider = new WebSocketDataProvider(kafkaWriter,
+                config.getString("data-provider.kafka.topic.unconfirmed-transactions"));
         webSocketDataProvider.start();
 
-        httpClientDataProvider = new HttpClientDataProvider(kafkaWriter);
+        httpClientDataProvider = new HttpClientDataProvider(kafkaWriter,
+                config.getString("data-provider.kafka.topic.coin-prices"));
         httpClientDataProvider.start();
     }
 

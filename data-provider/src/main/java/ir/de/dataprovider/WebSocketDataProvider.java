@@ -11,10 +11,12 @@ import java.util.List;
 public class WebSocketDataProvider {
     private KafkaWriter kafkaWriter;
     private List<WebSocketClient> webSocketClients;
+    private String topic;
 
 
-    public WebSocketDataProvider(KafkaWriter kafkaWriter) {
+    public WebSocketDataProvider(KafkaWriter kafkaWriter, String topic) {
         this.kafkaWriter = kafkaWriter;
+        this.topic = topic;
         webSocketClients = new ArrayList<>();
     }
 
@@ -53,7 +55,7 @@ public class WebSocketDataProvider {
             @Override
             public void onMessage(String message) {
                 System.out.println("Ethereum unconfirmed transactions web socket received message: " + message);
-                kafkaWriter.writeString("eth-unc", message);
+                kafkaWriter.writeString("eth-unc", message, topic);
             }
 
             @Override
