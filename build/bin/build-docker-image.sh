@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t de/data-provider -f ../../data-provider/Dockerfile ../../data-provider
+sudo docker build -t de/data-provider -f ../../data-provider/Dockerfile ../../data-provider
