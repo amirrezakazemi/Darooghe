@@ -8,7 +8,8 @@ import java.io.File;
 public class DataProvider {
 
     private KafkaWriter kafkaWriter;
-    private BitcoinFecher bitcoinFecher;
+    private WebSocketDataProvider webSocketDataProvider;
+    private HttpClientDataProvider httpClientDataProvider;
 
     public void start() throws InterruptedException {
 
@@ -23,12 +24,16 @@ public class DataProvider {
         kafkaWriter = new KafkaWriter(config.getString("data-provider.kafka.bootstrap.servers"),
                 config.getString("data-provider.kafka.topic"));
 
-        bitcoinFecher = new BitcoinFecher(config.getString("data-provider.bitcoin.wss.uri"), kafkaWriter);
-        bitcoinFecher.start();
+        webSocketDataProvider = new WebSocketDataProvider(kafkaWriter);
+        webSocketDataProvider.start();
+
+        httpClientDataProvider = new HttpClientDataProvider(kafkaWriter);
+        httpClientDataProvider.start();
     }
 
     public void close() {
-        bitcoinFecher.close();
+        webSocketDataProvider.close();
         kafkaWriter.close();
+        httpClientDataProvider.close();
     }
 }
