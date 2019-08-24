@@ -2,7 +2,12 @@ name := "SparkBitcoinPrice"
 
 version := "0.1"
 
+organization := "ir.de"
+
 scalaVersion := "2.11.12"
+
+mainClass in assembly := Some("ir.de.dataprovider.Application")
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 
 libraryDependencies += "org.apache.kafka" %% "kafka" % "2.2.0"
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.1"
