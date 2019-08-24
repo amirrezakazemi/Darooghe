@@ -25,7 +25,7 @@ object SparkBitcoinPrice extends SparkSessionBuilder {
     val inputDf = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "localhost:9092")
-      .option("subscribe", "bitcoin-transactions")
+      .option("subscribe", "coin-prices")
       .option("startingoffsets", "latest")
       //.option("failOnDataLoss", "false")
       .load()
