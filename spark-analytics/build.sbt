@@ -6,7 +6,7 @@ organization := "ir.de"
 
 scalaVersion := "2.11.12"
 
-mainClass in assembly := Some("ir.de.dataprovider.Application")
+mainClass in assembly := Some("SparkBitcoinPrice")
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 
 libraryDependencies += "org.apache.kafka" %% "kafka" % "2.2.0"
