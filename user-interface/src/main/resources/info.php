@@ -46,7 +46,7 @@
  });
  var getData = function() {
                   $.ajax({
-		  url: 'http://localhost/live.php',
+		  url: 'http://192.168.53.16/live.php',
 			dataType: "json",
                     success: function(result) {
                       // process your data to pull out what you plan to use to update the chart
