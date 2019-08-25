@@ -12,12 +12,13 @@ class SparkSessionBuilder extends Serializable {
 
       .set("spark.sql.streaming.checkpointLocation", "checkpoint")
 
+      .set("spark.sql.codegen.wholeStage","false")
+
     @transient lazy val spark = SparkSession
 
       .builder()
       .master("local[*]")
       .config(conf)
-
       .getOrCreate()
 
 
