@@ -1,4 +1,4 @@
-package ir.de.dataprovider;
+package de.dataprovider;
 
 public class Application {
 

@@ -1,4 +1,4 @@
-package ir.de.dataprovider;
+package de.dataprovider;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;

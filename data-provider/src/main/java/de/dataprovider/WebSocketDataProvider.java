@@ -1,4 +1,4 @@
-package ir.de.dataprovider;
+package de.dataprovider;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;

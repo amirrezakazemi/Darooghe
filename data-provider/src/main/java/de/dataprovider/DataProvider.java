@@ -1,4 +1,4 @@
-package ir.de.dataprovider;
+package de.dataprovider;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -23,13 +23,19 @@ public class DataProvider {
 
         kafkaWriter = new KafkaWriter(config.getString("data-provider.kafka.bootstrap.servers"));
 
-        webSocketDataProvider = new WebSocketDataProvider(kafkaWriter,
-                config.getString("data-provider.kafka.topic.unconfirmed-transactions"));
-        webSocketDataProvider.start();
+        if(config.getString("data-provider.mode").equals("fake")) {
+            FakeDataProvider fakeDataProvider = new FakeDataProvider(kafkaWriter,
+                    config.getString("data-provider.kafka.topic.coin-prices"));
+            fakeDataProvider.start();
+        } else {
+            webSocketDataProvider = new WebSocketDataProvider(kafkaWriter,
+                    config.getString("data-provider.kafka.topic.unconfirmed-transactions"));
+            webSocketDataProvider.start();
 
-        httpClientDataProvider = new HttpClientDataProvider(kafkaWriter,
-                config.getString("data-provider.kafka.topic.coin-prices"));
-        httpClientDataProvider.start();
+            httpClientDataProvider = new HttpClientDataProvider(kafkaWriter,
+                    config.getString("data-provider.kafka.topic.coin-prices"));
+            httpClientDataProvider.start();
+        }
     }
 
     public void close() {
