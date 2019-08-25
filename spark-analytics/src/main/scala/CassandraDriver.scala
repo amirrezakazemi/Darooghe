@@ -1,4 +1,3 @@
-
 import com.datastax.spark.connector.cql.CassandraConnector
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
@@ -11,8 +10,10 @@ class CassandraDriver extends SparkSessionBuilder {
 
   val connector = CassandraConnector(spark.sparkContext.getConf)
 
-  val namespace = "bitcoin"
+  val namespace = "coinprice"
 
-  val foreachTableSink = "test3"
+  val foreachTableSink = "bitcoinpricelinear"
+
+  val smaTable = "bitcoinpricesma"
 
 }
