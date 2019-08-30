@@ -17,7 +17,8 @@ class SparkSessionBuilder extends Serializable {
     @transient lazy val spark = SparkSession
 
       .builder()
-      .master("local[*]")
+//      .master("local[*]")
+//      .master("spark://localhost:7077")
       .config(conf)
       .getOrCreate()
 
