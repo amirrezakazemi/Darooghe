@@ -8,7 +8,7 @@ class SparkSessionBuilder extends Serializable {
 
       .setAppName("Structured Streaming from Kafka to Cassandra")
 
-      .set("spark.cassandra.connection.host", "localhost")
+      .set("spark.cassandra.connection.host", "172.18.0.3, 127.18.0.4")
 
       .set("spark.sql.streaming.checkpointLocation", "checkpoint")
 

@@ -3,6 +3,7 @@ import org.apache.spark.sql.functions.{from_json, from_unixtime}
 import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{ForeachWriter, Row}
+import com.datastax.spark.connector.streaming._
 
 
 object SparkBitcoinPrice extends SparkSessionBuilder {
@@ -26,9 +27,10 @@ object SparkBitcoinPrice extends SparkSessionBuilder {
     val inputDf = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "localhost:9092")
+      .option("kafka.group.id", "spark-analytics")
       .option("subscribe", "coin-prices")
       .option("startingoffsets", "latest")
-      //.option("failOnDataLoss", "false")
+      .option("failOnDataLoss", "false")
       .load()
 
     var PriceData = inputDf.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
@@ -53,19 +55,21 @@ object SparkBitcoinPrice extends SparkSessionBuilder {
         ((count("time") * sum($"X" * $"X") - sum($"X") * sum($"XY")) /
           (count("time") * sum($"X" * $"X").cast(DataTypes.LongType) - sum($"X").cast(DataTypes.LongType) * sum($"X").cast(DataTypes.LongType))).alias("intercept")
       )
-      .withColumn("start", col("time_interval.start"))
+      //.withColumn("start", col("time_interval.start"))
       .withColumn("end", col("time_interval.end"))
       .withColumn("datetime", col("end").substr(0, 16))
+      .withColumn("secondtime", col("end").substr(18, 20).cast(DataTypes.IntegerType))
 
     val BitcoinPriceSMA = PriceData.where(PriceData.col("key").equalTo("btc-p"))
       .select("PriceData.*").withColumn("time", from_unixtime($"timestamp").cast(DataTypes.TimestampType))
       .withWatermark("time", "3 seconds")
       .groupBy(window($"time", "60 seconds", "1 seconds").alias("time_interval"))
-      .agg(avg($"last").alias("SMA").cast(DataTypes.LongType))
+      .agg(avg($"last").alias("SMA").cast(DataTypes.DoubleType))
       //.withColumn("start", col("time_interval.start"))
       .withColumn("end", col("time_interval.end"))
       .withColumn("datetime", col("end").substr(0, 16))
-      .withColumn("secondtime", col("end").substr(18, 20))
+      .withColumn("secondtime", col("end").substr(18, 20).cast(DataTypes.IntegerType))
+
 
 
     var EthereumPriceTable = PriceData.where(PriceData.col("key").equalTo("eth-p"))
@@ -117,7 +121,7 @@ object SparkBitcoinPrice extends SparkSessionBuilder {
         }
         override def process(value: Row): Unit = {
           cassandraDriver.connector.withSessionDo(session =>
-            session.execute(s"""insert into ${cassandraDriver.namespace}.${cassandraDriver.foreachTableSink} (slope, intercept,start, end , datetime) values(${value(1)}, ${value(2)},'${value(3)}', '${value(4)}', '${value(5)}')""")
+            session.execute(s"""insert into ${cassandraDriver.namespace}.${cassandraDriver.foreachTableSink} (slope, intercept, end , datetime, secondtime) values(${value(1)}, ${value(2)},'${value(3)}', '${value(4)}', '${value(5)}')""")
           )
         }
         override def close(errorOrNull: Throwable): Unit = {

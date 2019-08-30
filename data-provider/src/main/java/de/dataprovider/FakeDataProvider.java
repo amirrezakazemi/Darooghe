@@ -30,7 +30,7 @@ public class FakeDataProvider {
     private String generatePriceRecord(int price) {
         return String.format("{\"high\": \"0\", \"last\": \"%d\", \"timestamp\": \"%d\", \"bid\": \"0\"," +
                 " \"vwap\": \"0\", \"volume\": \"0\", \"low\": \"0\", \"ask\": \"0\", \"open\": \"0\"}",
-                price, System.currentTimeMillis());
+                price, System.currentTimeMillis()/1000);
     }
 
     private int nextPrice(int lastPrice) {
