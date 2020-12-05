@@ -5,7 +5,7 @@ we crawled data by using free existing apis to gather live crypto dataset(bitcoi
 ## Kafka
 we stroed data in kafka queues
 ## Spark
-we used spark structured streaming feautre to analyze the data and preprocess , extract meaningful content and performing analysis on them
+we used spark structured streaming feautre to preprocess , extract meaningful content and performing analysis on data
 ## Cassandra
 cassandra is used to store our analysis ready for php. we used docker to create 3 distributed nodes.
 ## PHP
